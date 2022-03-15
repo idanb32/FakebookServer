@@ -11,7 +11,7 @@ const port = config.get("server.port");
 
 
 console.log('asd');
-console.log("hi")
+console.log("hi");
 app.listen(port, () => {
     console.log(`Server is running on PORT: ${port}`);
  });

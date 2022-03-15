@@ -1,5 +1,9 @@
 {
     "server": {
-        "port": 3004
+        "port": 3004,
+        "allowedOrigin": "*"
+    },
+    "db": {
+        "url": "mongodb+srv://user:pass@cluster0.dcsek.mongodb.net/myFirstDatabase?retryWrites=true&w=majority"
     }
 }
