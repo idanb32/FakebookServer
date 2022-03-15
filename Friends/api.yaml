@@ -1,0 +1,23 @@
+openapi: 3.0.0
+info:
+  title:
+  description: 
+  version: 1.0
+
+servers:
+  - url: http://localhost:/
+    description: local server
+
+paths:
+ 
+      responses:
+        200:
+          description: Successful Response
+        400:
+          description: User Error
+        500:
+          description: Internal Server Error
+
+components:
+  schemas:
+   
