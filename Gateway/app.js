@@ -10,7 +10,7 @@ const config = container.resolve("config");
 const port = config.get("server.port");
 
 
-
+console.log('asd');
 app.listen(port, () => {
     console.log(`Server is running on PORT: ${port}`);
  });
