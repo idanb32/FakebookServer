@@ -3,7 +3,7 @@ const Comment = require('../models/Comments');
 module.exports = class CommentsRep {
 
     async addCommentFromBody(body) {
-        await this.addComment(body.text, body.userId, body.postId);
+        return await this.addComment(body.text, body.userId, body.postId);
     }
 
     async editCommentFromBody(body) {
@@ -14,17 +14,17 @@ module.exports = class CommentsRep {
         await this.deleteComment(body.commentId);
     }
 
-    async getCommentFromBody(body){
+    async getCommentFromBody(body) {
         let comment = await this.getComment(body.commentId);
         return comment;
     }
 
-    async getAllComments(){
+    async getAllComments() {
         return await Comment.find();
     }
 
-    async getComment(commentId){
-        let comment  = await Comment.findById(commentId);
+    async getComment(commentId) {
+        let comment = await Comment.findById(commentId);
         return comment;
     }
 
@@ -42,10 +42,11 @@ module.exports = class CommentsRep {
         let currentTime = new Date();
         let newComment = new Comment({
             text: text,
-            user_id:userId,
+            user_id: userId,
             time_sent: currentTime,
             post_id: postId
         });
         await newComment.save();
+        return newComment._id;
     }
 }

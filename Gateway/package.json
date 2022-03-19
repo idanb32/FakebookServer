@@ -1,5 +1,5 @@
 {
-  "name": "Authentication",
+  "name": "Gateway",
   "version": "1.0.0",
   "description": "",
   "main": "app.js",
@@ -11,9 +11,11 @@
   "license": "ISC",
   "dependencies": {
     "awilix": "^6.1.0",
+    "axios": "^0.26.1",
     "config": "^3.3.7",
     "cors": "^2.8.5",
     "express": "^4.17.3",
+    "multer": "^2.0.0-rc.1",
     "nodemon": "^2.0.15",
     "swagger-ui-express": "^4.1.6",
     "yamljs": "^0.3.0"

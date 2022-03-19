@@ -6,8 +6,8 @@ const rep = container.resolve('CommentRep');
 
 
 router.post('/Add', async (req, res) => {
-    await rep.addCommentFromBody(req.body);
-    res.send('Comment has been added');
+    let commentId = await rep.addCommentFromBody(req.body);
+    res.send(commentId);
 });
 router.post('/Delete', async (req, res) => {
     await rep.deleteCommentFromBody(req.body);
