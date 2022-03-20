@@ -24,6 +24,8 @@ app.use('/Comment', CommentsRouter);
 app.use('/User', UserRouter);
 app.use('/Post', PostRouter);
 
+
+
 app.listen(port, () => {
     console.log(`Server is running on PORT: ${port}`);
 });
