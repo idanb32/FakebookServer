@@ -35,6 +35,24 @@ module.exports = class UserRep {
         return await this.getUser(body.id);
     }
 
+    async getUserViaUsernameBody(body) {
+        return await this.getUserViaUsername(body.username);
+    }
+    async GetOrCreateFacebookBody(body) {
+        return await this.GetOrCreateFacebook(body.facebookId,
+            body.userDisplay,
+            body.imgurl,
+            body.email);
+    }
+
+    async GetOrCreateGoogleBody(body) {
+        return await this.GetOrCreateGoogle(body.googleId,
+            body.userDisplay,
+            body.imgurl,
+            body.email);
+    }
+
+
     async getFriendsBody(body) {
         return await this.getFriends(body.id);
     }
@@ -69,7 +87,7 @@ module.exports = class UserRep {
         });
         try {
             await newUser.save();
-            return true;
+            return newUser;
         }
         catch (err) {
             console.log(err);
@@ -86,7 +104,7 @@ module.exports = class UserRep {
         });
         try {
             await newUser.save();
-            return true;
+            return newUser;
         }
         catch (err) {
             console.log(err);
@@ -103,12 +121,26 @@ module.exports = class UserRep {
                 email: email
             });
             await newUser.save();
-            return true;
+            return newUser;
         }
         catch (err) {
             console.log(err);
             return false;
         }
+    }
+
+    async GetOrCreateFacebook(facebookId, userDisplay, imgurl, email) {
+        let user = await User.findOne({ facebook_account: facebookId });
+        if (user) return user;
+        let newUser = await this.addUserViaFacebook(facebookId, userDisplay, imgurl, email);
+        return newUser;
+    }
+
+    async GetOrCreateGoogle(googleId, userDisplay, imgurl, email) {
+        let user = await User.findOne({ google_account: googleId });
+        if (user) return user;
+        let newUser = await this.addUserViaGoogle(googleId, userDisplay, imgurl, email);
+        return newUser;
     }
 
     async updatePassword(userName, newPassword) {
@@ -120,6 +152,11 @@ module.exports = class UserRep {
     async getUser(id) {
         let user = await User.findById(id);
         return user;
+    }
+    async getUserViaUsername(username) {
+        let user = await User.findOne({ user_name: username });
+        if (user) return user;
+        return false;
     }
 
     async getFriends(id) {

@@ -14,7 +14,6 @@ router.post('/Add', async (req, res) => {
     }
     else {
         didAUserWasAdded = await rep.addUserViaUserPassBody(req.body);
-        
     }
     res.send(didAUserWasAdded);
 });
@@ -36,6 +35,21 @@ router.post('/GetFriendGroups', async (req, res) => {
 
 router.post('/Get', async (req, res) => {
     let user = await rep.getUserBody(req.body);
+    res.send(user);
+})
+
+router.post('/GetByName', async (req, res) => {
+    let user = await rep.getUserViaUsernameBody(req.body);
+    res.send(user);
+})
+
+router.post('/GetOrCreateGoogle', async (req, res) => {
+    let user = await rep.GetOrCreateGoogleBody(req.body);
+    res.send(user);
+})
+
+router.post('/GetOrCreateFacebook', async (req, res) => {
+    let user = await rep.GetOrCreateFacebookBody(req.body);
     res.send(user);
 })
 
