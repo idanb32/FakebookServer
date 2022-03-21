@@ -5,11 +5,22 @@ info:
   version: 1.0
 
 servers:
-  - url: http://localhost:3004/
+  - url: http://localhost:3005/
     description: local server
 
 paths:
- 
+  /User:
+    post:
+      /AddUser:
+       summary: Add a user to the database
+       requestBody:
+         required: true
+         content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/userParams'
+                $ref: '#/components/schemas/friendGroupParams'
+
       responses:
         200:
           description: Successful Response
@@ -20,4 +31,78 @@ paths:
 
 components:
   schemas:
-   
+    userParams:
+      type: object
+      required:
+        - user_name
+        - user_display
+        - password
+        - email
+        - image_url
+        - google_account
+        - facebook_account
+        - friends
+        - friend_groups
+        - posts
+        - block_list
+      properties:
+        user_name:
+          type: string
+        user_display:
+          type: string
+        password:
+          type: string 
+            format: password
+        email:
+          type: string
+        google_account:
+          type: string
+        facebook_account:
+          type: string
+        friends:
+          type: array
+          items:
+            $ref: '#/components/schemas/userParams'
+        friend_groups:
+          type: array
+          items:
+            $ref: '#/components/schemas/friendGroupParams'
+        posts:
+          type: array
+          items:
+            $ref: '#/components/schemas/postParams'
+        block_list:
+          type: array
+          items:
+            $ref: '#components/schemas/userParams'
+    friendGroupParams:
+      type: object
+      required:
+        - users_id
+        - name
+      properties:
+        users_id:
+          type: array
+          items:
+            $ref: '#/components/schemas/userParams'
+        name:
+          type: string
+    postParams:
+      type: object
+      required:
+        - image_url
+        - location
+        - time_posted
+        - user
+        - tags
+        - user_tags
+        - text
+        - likes
+        - comments
+      properties:
+        image_url:
+          type: string
+        location:
+          type: object
+
+        
