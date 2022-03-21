@@ -15,8 +15,10 @@ app.use(cors({
     origin: origin
 }));
 
+const loginRouter = require('./routers/loginRouter');
+app.use('/', loginRouter);
 
 
 app.listen(port, () => {
     console.log(`Server is running on PORT: ${port}`);
- });
+});

@@ -23,6 +23,12 @@ router.post('/UpdatePassword', async (req, res) => {
     res.send(`password has been updated`);
 })
 
+router.post('/UpdateImg', async (req, res) => {
+    console.log('got into updateImg')
+    await rep.updateUrlBody(req.body);
+    res.send(`password has been updated`);
+})
+
 router.post('/GetFriends', async (req, res) => {
     let friends = await rep.getFriendsBody(req.body);
     res.send(friends);

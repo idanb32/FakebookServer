@@ -31,6 +31,11 @@ module.exports = class UserRep {
         await this.updatePassword(body.username, body.password);
     }
 
+    async updateUrlBody(body){
+        await this.updateUrl(body.username, body.imgUrl);
+    }
+
+
     async getUserBody(body) {
         return await this.getUser(body.id);
     }
@@ -146,6 +151,13 @@ module.exports = class UserRep {
     async updatePassword(userName, newPassword) {
         await User.updateOne({ user_name: userName }, {
             password: newPassword
+        });
+    }
+
+    async updateUrl(username,imgUrl){
+        console.log(username,imgUrl);
+        await User.updateOne({ user_name: username }, {
+            image_url: imgUrl
         });
     }
 
