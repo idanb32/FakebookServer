@@ -39,6 +39,7 @@ router.post('/getInfo', (req, res) => {
 })
 
 router.post('/refreshTheToken', (req, res) => {
+    console.log("in refresh token")
     let resault = LoginService.refreshTheToken(req.body.refreshToken);
     res.send(resault);
 })

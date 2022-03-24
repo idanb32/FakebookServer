@@ -37,7 +37,6 @@ module.exports = class LoginService {
     }
 
     async loginGoogle(googleObj) {
-        console.log(googleObj);
         let userReq = await axios.post(this._dataBaseServer + "User/GetOrCreateGoogle", googleObj);
         let user = userReq.data;
         if (this._loggedInUsers[user._id] == "userLogged") return "User logged in already.";
@@ -49,7 +48,6 @@ module.exports = class LoginService {
     }
 
     async loginFacebook(facebookObj) {
-        console.log(facebookObj);
         let userReq = await axios.post(this._dataBaseServer + "User/GetOrCreateFacebook", facebookObj);
         let user = userReq.data;
         if (this._loggedInUsers[user._id] == "userLogged") return "User logged in already.";
@@ -70,22 +68,42 @@ module.exports = class LoginService {
                 console.log(err)
                 return false;
             }
+            let formatedUser = this.formatUser(user)
+            console.log(formatedUser)
             if (this._loggedInUsers[user._id] != 'userLogged')
                 this._loggedInUsers[user._id] = "userLogged";
-            let newToken = jwt.sign(user, process.env.ACCESS_TOKEN_SECRET, { expiresIn: '14m' });
-            return newToken;
+            let newToken = jwt.sign(formatedUser, process.env.ACCESS_TOKEN_SECRET, { expiresIn: '14m' });
+            let returnMe = { user: formatedUser, token: { accessToken: newToken, refreshToken: refreshToken } };
+            console.log(returnMe)
+            return returnMe;
         });
     }
 
+    formatUser(user) {
+        return {
+            _id: user._id,
+            user_display: user.user_display,
+            email: user.email,
+            image_url: user.image_url,
+            google_account: user.google_account,
+            friends: user.friends,
+            friend_groups: user.friend_groups,
+            posts: user.posts,
+            bloack_list: user.bloack_list
+        }
+    }
+
     getInfo(token) {
+        console.log(token)
         if (token == null) return false;
         return jwt.verify(token, process.env.ACCESS_TOKEN_SECRET, (err, user) => {
-            console.log(user);
             if (err) {
+                if (err.expiredAt)
+                    return "Expired"
                 console.log(err)
                 return false;
             }
-            return user;
+            return this.formatUser(user);
         });
     }
 

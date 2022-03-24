@@ -39,12 +39,14 @@ router.post('/register', async (req,res)=>{
 })
 
 router.post('/getInfo', async (req,res)=>{
+    console.log('in get info')
     let resault = await axios.post(port+"/getInfo",req.body);
     let data = resault.data;
     res.send(data);
 })
 
 router.post('/refreshTheToken', async (req,res)=>{
+    console.log('in refresh token')
     let resault = await axios.post(port+"/refreshTheToken",req.body);
     let data = resault.data;
     res.send(data);
