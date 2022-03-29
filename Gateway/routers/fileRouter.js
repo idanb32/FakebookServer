@@ -7,6 +7,7 @@ const axios = container.resolve('axios');
 const config = container.resolve('config');
 const dbPort = config.get('database.port');
 
+const path = require('path');
 const fs = require("fs");
 const { promisify } = require("util");
 const pipeline = promisify(require("stream").pipeline);
@@ -38,5 +39,6 @@ router.post('/uploadForSignUp', multer.single("file"), async (req, res) => {
         })
     res.send(axiosRes.data);
 })
+
 
 module.exports = router;

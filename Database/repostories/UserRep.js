@@ -1,7 +1,7 @@
 const User = require('../models/User');
 // const FriendGroup = require('../models/FriendGroup');
 const Post = require('../models/Post');
-
+const mongoose = require('mongoose');
 
 module.exports = class UserRep {
 
@@ -31,7 +31,7 @@ module.exports = class UserRep {
         await this.updatePassword(body.username, body.password);
     }
 
-    async updateUrlBody(body){
+    async updateUrlBody(body) {
         await this.updateUrl(body.username, body.imgUrl);
     }
 
@@ -62,12 +62,16 @@ module.exports = class UserRep {
         return await this.getFriends(body.id);
     }
 
+    async GetAllNonFriendsUsersFromBody(body) {
+        return await this.GetAllNonFriendsUsers(body.friends);
+    }
+
     async getFriendsGroupsBody(body) {
         return await this.getFriendsGroups(body.id);
     }
 
     async addFriendBody(body) {
-        await this.addFriend(body.id, body.friendId);
+        return await this.addFriend(body.id, body.friendId);
     }
 
     async removeFriendBody(body) {
@@ -99,6 +103,14 @@ module.exports = class UserRep {
             return false;
         }
     }
+
+    async GetAllNonFriendsUsers(friendsString) {
+        let allUsers = await User.find();
+        let difference = allUsers.filter(x => !friendsString.includes(x._id.toString()));
+        let differenceName = difference.map((item) => { return { friendName: item.user_display, id: item._id } });
+        return differenceName;
+    }
+
 
     async addUserViaFacebook(facebookId, userDisplay, imgurl, email) {
         let newUser = new User({
@@ -154,8 +166,8 @@ module.exports = class UserRep {
         });
     }
 
-    async updateUrl(username,imgUrl){
-        console.log(username,imgUrl);
+    async updateUrl(username, imgUrl) {
+        console.log(username, imgUrl);
         await User.updateOne({ user_name: username }, {
             image_url: imgUrl
         });
@@ -193,13 +205,22 @@ module.exports = class UserRep {
 
     async addFriend(id, friendId) {
         let user = await this.getUser(id);
+        let friend = await this.getUser(friendId);
         let friends = user.friends;
+        if (!friends) friends = [];
+        let friendsOfFriend = friend.friends;
+        if (!friendsOfFriend) friendsOfFriend = [];
         let indexOfFriendRemoved = friends.indexOf(friendId);
-        if (indexOfFriendRemoved !== -1) return
+        if (indexOfFriendRemoved !== -1) return false
         friends.push(friendId);
+        friendsOfFriend.push(id);
         await User.updateOne({ _id: id }, {
             friends: friends
         });
+        await User.updateOne({ _id: friendId }, {
+            friends: friendsOfFriend
+        });
+        return true
     }
 
     async removeFriend(id, friendId) {

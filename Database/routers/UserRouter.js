@@ -60,8 +60,8 @@ router.post('/GetOrCreateFacebook', async (req, res) => {
 })
 
 router.post('/AddFriend', async (req, res) => {
-    await rep.addFriendBody(req.body);
-    res.send('friend has been added');
+    let resault = await rep.addFriendBody(req.body);
+    res.send(resault);
 })
 
 router.post('/RemoveFriend', async (req, res) => {
@@ -74,7 +74,11 @@ router.post('/BlockUser', async (req, res) => {
     res.send('friend has been blocked');
 })
 
-
+router.post('/GetAllNonFriendsUsers', async (req, res) => {
+    console.log(req.body);
+    let resault = await rep.GetAllNonFriendsUsersFromBody(req.body);
+    res.send(resault);
+});
 
 
 module.exports = router;

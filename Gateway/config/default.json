@@ -8,6 +8,9 @@
     },
     "database":{
         "port":"http://localhost:3005"
+    },
+    "friends":{
+        "port":"http://localhost:3003"
     }
     
 }
