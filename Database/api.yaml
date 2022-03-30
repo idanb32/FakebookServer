@@ -10,17 +10,43 @@ servers:
 
 paths:
   /User:
+  
+  /User/Add: #userName and userDisplay not showing in DB
     post:
-      /AddUser:
-       summary: Add a user to the database
-       requestBody:
-         required: true
-         content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/userParams'
-                $ref: '#/components/schemas/friendGroupParams'
-
+      tags:
+      - User
+      summary: Add a user to the database
+      consumes:
+        - application/json
+      produces:
+        - application/json
+      description: "Add the required properties to add a new user."
+      parameters:
+      - in: body
+        name: body
+        description: Pet object that needs to be added to the store
+        required: true
+        schema:
+          application/json:
+          $ref: '#/components/schemas/userParams'
+      responses:
+        200:
+          description: Successful Response
+        400:
+          description: User Error
+        500:
+          description: Internal Server Error
+  /User/Delete/{user_id}:
+    delete:
+      tags:
+      - User
+      summary: Deletes a user from the database
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/userParams'
       responses:
         200:
           description: Successful Response
@@ -52,7 +78,7 @@ components:
           type: string
         password:
           type: string 
-            format: password
+          format: password
         email:
           type: string
         google_account:
@@ -104,5 +130,47 @@ components:
           type: string
         location:
           type: object
-
-        
+        time_posted:
+          type: string
+          format: date-time
+        user:
+          type: object
+          $ref: '#/components/schemas/userParams'
+        tags:
+          type: array
+          items: 
+            type: string
+        user_tags:
+          type: array
+          items:
+            type: string
+        text:
+          type: string
+        likes:
+          type: array
+          items: 
+            $ref: '#/components/schemas/userParams'
+        comments:
+          type: array
+          items: 
+            $ref: '#/components/schemas/commentParams'
+    commentParams:
+      type: object
+      required:
+        - text
+        - user_id
+        - time_sent
+        - post_id
+      properties:
+        text:
+          type: string
+        user_id:
+          type: object
+          $ref: '#/components/schemas/userParams'
+        time_sent:
+          type: string
+          format: date-time
+        post_id:
+          type: string
+          $ref: '#/components/schemas/postParams'
+          
