@@ -26,7 +26,7 @@ const socketIoServer = require('socket.io')(server, {
 const myIoServerInstance = new SocketService(socketIoServer);
 myIoServerInstance.startServer();
 
-
+console.log("hi");
 socketIoServer.listen(port, () => {
     console.log(`Server is running on PORT: ${port}`);
 });
