@@ -13,16 +13,20 @@ const origin = config.get('server.allowedOrigin');
 
 const CommentsRouter = require('./routers/CommentsRouter');
 const UserRouter = require('./routers/UserRouter');
-const PostRouter = require('./routers/PostRouter')
+const PostRouter = require('./routers/PostRouter');
+const FriendsGroupRouter = require('./routers/FriendsGroupRouter');
 
 
 app.use(cors({
     origin: origin
 }));
 
+app.use('/api-docs', swaggerUI.serve, swaggerUI.setup(swaggerJsDocs));
+
 app.use('/Comment', CommentsRouter);
 app.use('/User', UserRouter);
 app.use('/Post', PostRouter);
+app.use('/FriendGroup', FriendsGroupRouter);
 
 
 
