@@ -40,7 +40,7 @@ const UserSchema = new Schema({
         type:  mongoose.Schema.Types.ObjectId,
         ref : 'Post'
     }],
-    bloack_list:[{
+    block_list:[{
         type:  mongoose.Schema.Types.ObjectId,
         ref : 'User',
     }]
