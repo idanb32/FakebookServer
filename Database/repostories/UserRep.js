@@ -1,7 +1,7 @@
 const User = require('../models/User');
 // const FriendGroup = require('../models/FriendGroup');
 const Post = require('../models/Post');
-
+const mongoose = require('mongoose');
 
 module.exports = class UserRep {
 
@@ -31,12 +31,39 @@ module.exports = class UserRep {
         await this.updatePassword(body.username, body.password);
     }
 
+    async updateUrlBody(body) {
+        await this.updateUrl(body.username, body.imgUrl);
+    }
+
+
     async getUserBody(body) {
         return await this.getUser(body.id);
     }
 
+    async getUserViaUsernameBody(body) {
+        return await this.getUserViaUsername(body.username);
+    }
+    async GetOrCreateFacebookBody(body) {
+        return await this.GetOrCreateFacebook(body.facebookId,
+            body.userDisplay,
+            body.imgurl,
+            body.email);
+    }
+
+    async GetOrCreateGoogleBody(body) {
+        return await this.GetOrCreateGoogle(body.googleId,
+            body.userDisplay,
+            body.imgurl,
+            body.email);
+    }
+
+
     async getFriendsBody(body) {
         return await this.getFriends(body.id);
+    }
+
+    async GetAllNonFriendsUsersFromBody(body) {
+        return await this.GetAllNonFriendsUsers(body.friends);
     }
 
     async getFriendsGroupsBody(body) {
@@ -44,7 +71,7 @@ module.exports = class UserRep {
     }
 
     async addFriendBody(body) {
-        await this.addFriend(body.id, body.friendId);
+        return await this.addFriend(body.id, body.friendId);
     }
 
     async removeFriendBody(body) {
@@ -69,13 +96,21 @@ module.exports = class UserRep {
         });
         try {
             await newUser.save();
-            return true;
+            return newUser;
         }
         catch (err) {
             console.log(err);
             return false;
         }
     }
+
+    async GetAllNonFriendsUsers(friendsString) {
+        let allUsers = await User.find();
+        let difference = allUsers.filter(x => !friendsString.includes(x._id.toString()));
+        let differenceName = difference.map((item) => { return { friendName: item.user_display, id: item._id } });
+        return differenceName;
+    }
+
 
     async addUserViaFacebook(facebookId, userDisplay, imgurl, email) {
         let newUser = new User({
@@ -86,7 +121,7 @@ module.exports = class UserRep {
         });
         try {
             await newUser.save();
-            return true;
+            return newUser;
         }
         catch (err) {
             console.log(err);
@@ -103,12 +138,26 @@ module.exports = class UserRep {
                 email: email
             });
             await newUser.save();
-            return true;
+            return newUser;
         }
         catch (err) {
             console.log(err);
             return false;
         }
+    }
+
+    async GetOrCreateFacebook(facebookId, userDisplay, imgurl, email) {
+        let user = await User.findOne({ facebook_account: facebookId });
+        if (user) return user;
+        let newUser = await this.addUserViaFacebook(facebookId, userDisplay, imgurl, email);
+        return newUser;
+    }
+
+    async GetOrCreateGoogle(googleId, userDisplay, imgurl, email) {
+        let user = await User.findOne({ google_account: googleId });
+        if (user) return user;
+        let newUser = await this.addUserViaGoogle(googleId, userDisplay, imgurl, email);
+        return newUser;
     }
 
     async updatePassword(userName, newPassword) {
@@ -117,9 +166,21 @@ module.exports = class UserRep {
         });
     }
 
+    async updateUrl(username, imgUrl) {
+        console.log(username, imgUrl);
+        await User.updateOne({ user_name: username }, {
+            image_url: imgUrl
+        });
+    }
+
     async getUser(id) {
         let user = await User.findById(id);
         return user;
+    }
+    async getUserViaUsername(username) {
+        let user = await User.findOne({ user_name: username });
+        if (user) return user;
+        return false;
     }
 
     async getFriends(id) {
@@ -144,13 +205,22 @@ module.exports = class UserRep {
 
     async addFriend(id, friendId) {
         let user = await this.getUser(id);
+        let friend = await this.getUser(friendId);
         let friends = user.friends;
+        if (!friends) friends = [];
+        let friendsOfFriend = friend.friends;
+        if (!friendsOfFriend) friendsOfFriend = [];
         let indexOfFriendRemoved = friends.indexOf(friendId);
-        if (indexOfFriendRemoved !== -1) return
+        if (indexOfFriendRemoved !== -1) return false
         friends.push(friendId);
+        friendsOfFriend.push(id);
         await User.updateOne({ _id: id }, {
             friends: friends
         });
+        await User.updateOne({ _id: friendId }, {
+            friends: friendsOfFriend
+        });
+        return true
     }
 
     async removeFriend(id, friendId) {

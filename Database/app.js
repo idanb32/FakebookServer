@@ -28,6 +28,8 @@ app.use('/User', UserRouter);
 app.use('/Post', PostRouter);
 app.use('/FriendGroup', FriendsGroupRouter);
 
+
+
 app.listen(port, () => {
     console.log(`Server is running on PORT: ${port}`);
 });

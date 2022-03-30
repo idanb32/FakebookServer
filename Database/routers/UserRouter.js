@@ -14,13 +14,18 @@ router.post('/Add', async (req, res) => {
     }
     else {
         didAUserWasAdded = await rep.addUserViaUserPassBody(req.body);
-        
     }
     res.send(didAUserWasAdded);
 });
 
 router.post('/UpdatePassword', async (req, res) => {
     await rep.updatePasswordBody(req.body);
+    res.send(`password has been updated`);
+})
+
+router.post('/UpdateImg', async (req, res) => {
+    console.log('got into updateImg')
+    await rep.updateUrlBody(req.body);
     res.send(`password has been updated`);
 })
 
@@ -39,9 +44,24 @@ router.post('/Get', async (req, res) => {
     res.send(user);
 })
 
+router.post('/GetByName', async (req, res) => {
+    let user = await rep.getUserViaUsernameBody(req.body);
+    res.send(user);
+})
+
+router.post('/GetOrCreateGoogle', async (req, res) => {
+    let user = await rep.GetOrCreateGoogleBody(req.body);
+    res.send(user);
+})
+
+router.post('/GetOrCreateFacebook', async (req, res) => {
+    let user = await rep.GetOrCreateFacebookBody(req.body);
+    res.send(user);
+})
+
 router.post('/AddFriend', async (req, res) => {
-    await rep.addFriendBody(req.body);
-    res.send('friend has been added');
+    let resault = await rep.addFriendBody(req.body);
+    res.send(resault);
 })
 
 router.post('/RemoveFriend', async (req, res) => {
@@ -54,7 +74,11 @@ router.post('/BlockUser', async (req, res) => {
     res.send('friend has been blocked');
 })
 
-
+router.post('/GetAllNonFriendsUsers', async (req, res) => {
+    console.log(req.body);
+    let resault = await rep.GetAllNonFriendsUsersFromBody(req.body);
+    res.send(resault);
+});
 
 
 module.exports = router;

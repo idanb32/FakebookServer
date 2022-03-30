@@ -17,8 +17,14 @@ app.use(cors({
 }));
 
 const fileRouter= require('./routers/fileRouter');
+const authenticationRouter= require('./routers/authenticationRouter');
+const friendsRouter = require('./routers/friendsRouter');
 
 app.use('/file',fileRouter);
+app.use('/authentication', authenticationRouter);
+app.use('/friends' , friendsRouter);
+
+app.use(express.static(__dirname ))
 
 app.listen(port, () => {
     console.log(`Server is running on PORT: ${port}`);

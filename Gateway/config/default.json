@@ -2,5 +2,15 @@
     "server": {
         "port": 3000,
         "originAllowed" : "*"
+    },
+    "authentication":{
+        "port":"http://localhost:3006"
+    },
+    "database":{
+        "port":"http://localhost:3005"
+    },
+    "friends":{
+        "port":"http://localhost:3003"
     }
+    
 }

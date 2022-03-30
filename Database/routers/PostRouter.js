@@ -9,6 +9,11 @@ router.post('/Add', async (req, res) => {
     res.send("Post has been added");
 })
 
+router.post('/AddFull', async (req, res) => {
+    let postId = await rep.addPostFullBody(req.body);
+    res.send(postId);
+})
+
 router.post('/AddTags', async (req, res) => {
     await rep.addTagsBody(req.body);
     res.send("Added tags to a post");
@@ -34,9 +39,20 @@ router.post('/Get', async (req, res) => {
     res.send(post);
 })
 
+router.post('/GetFriendsPost', async (req, res) => {
+    let friendsPosts = await rep.getPostsOfFriendsBody(req.body);
+    console.log(friendsPosts);
+    res.send(friendsPosts);
+})
+
 router.post('/GetByUserId', async (req, res) => {
     let posts = await rep.getPostOfUserBody(req.body);
     res.send(posts);
+})
+
+router.post('/AddLikeAndComment', async (req, res) => {
+    let respond = await rep.AddLikeAndCommentFromBody(req.body);
+    res.send(respond);
 })
 
 router.get('/GetAll', async (req, res) => {
