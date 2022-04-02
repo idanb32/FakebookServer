@@ -75,10 +75,15 @@ router.post('/BlockUser', async (req, res) => {
 })
 
 router.post('/GetAllNonFriendsUsers', async (req, res) => {
-    console.log(req.body);
     let resault = await rep.GetAllNonFriendsUsersFromBody(req.body);
     res.send(resault);
 });
+
+router.post('/GetAllFriendsName', async (req, res) => {
+    let resault = await rep.GetAllFriendsNameFromBody(req.body);
+    res.send(resault);
+});
+
 
 
 module.exports = router;

@@ -1,5 +1,10 @@
 {
     "server": {
-        "port": 3004
+        "port": 3004,
+        "originAllowed" : "*"
+    },
+    "database":{
+        "port":"http://localhost:3005"
     }
+    
 }

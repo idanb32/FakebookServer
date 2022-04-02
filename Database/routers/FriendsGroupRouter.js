@@ -27,5 +27,9 @@ router.get('/Get', async(req, res) => {
     await rep.getFriendGroup(req.body);
     res.send("Here's your Friend Group you've asked for...")
 })
+router.post('/getFriendsGroupName',async(req, res) =>{
+    let data = await rep.getFriendsGroupNameFromBody(req.body);
+    res.send(data);
+});
 
 module.exports = router;

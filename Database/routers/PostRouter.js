@@ -41,7 +41,6 @@ router.post('/Get', async (req, res) => {
 
 router.post('/GetFriendsPost', async (req, res) => {
     let friendsPosts = await rep.getPostsOfFriendsBody(req.body);
-    console.log(friendsPosts);
     res.send(friendsPosts);
 })
 
@@ -59,5 +58,16 @@ router.get('/GetAll', async (req, res) => {
     let posts = await rep.getPosts();
     res.send(posts);
 })
+router.post('/GetMyPosts', async (req, res) => {
+    let posts = await rep.getPostOfUserBody(req.body);
+    res.send(posts);
+})
+
+router.post('/UpdatePost' ,async(req,res)=>{
+    console.log('got to db update');
+    let post = await rep.UpdateMyPostFromBody(req.body);
+    res.send(post);
+})
+
 
 module.exports = router;

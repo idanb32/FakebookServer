@@ -11,6 +11,9 @@
     },
     "friends":{
         "port":"http://localhost:3003"
+    },
+    "filter":{
+        "port":"http://localhost:3004"
     }
     
 }

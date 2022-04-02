@@ -19,10 +19,13 @@ app.use(cors({
 const fileRouter= require('./routers/fileRouter');
 const authenticationRouter= require('./routers/authenticationRouter');
 const friendsRouter = require('./routers/friendsRouter');
+const filterRouter = require('./routers/filterRouter');
+
 
 app.use('/file',fileRouter);
 app.use('/authentication', authenticationRouter);
 app.use('/friends' , friendsRouter);
+app.use('/filter' , filterRouter);
 
 app.use(express.static(__dirname ))
 

@@ -32,10 +32,34 @@ router.post('/GetAllNonFriendsUsers', async (req, res) => {
     res.send(resault.data);
 });
 
+router.post('/GetAllFriendsName', async (req, res) => {
+    let resault = await axios.post(port + '/GetAllFriendsName', req.body);
+    res.send(resault.data);
+});
+
 router.post('/AddFriend', async (req, res) => {
     let resault = await axios.post(port + '/AddFriend', req.body);
     res.send(resault.data);
 });
+
+router.post('/AddFriendsGroup', async (req, res) => {
+    let resault = await axios.post(port + '/AddFriendsGroup', req.body);
+    console.log(resault.data);
+    res.send(resault.data);
+});
+router.post('/getFriendsGroupName', async (req, res) => {
+    console.log('get friends group name');
+    let resault = await axios.post(port + '/getFriendsGroupName', req.body);
+    console.log(resault.data);
+    res.send(resault.data);
+});
+
+router.post('/GetMyPosts' , async (req, res) =>{
+    let resault = await axios.post(port + '/GetMyPosts', req.body);
+    console.log(resault.data);
+    res.send(resault.data);
+});
+
 
 
 module.exports = router;

@@ -66,6 +66,10 @@ module.exports = class UserRep {
         return await this.GetAllNonFriendsUsers(body.friends);
     }
 
+    async GetAllFriendsNameFromBody(body){
+            return await this.GetAllFriendsName(body.friends);
+    }
+
     async getFriendsGroupsBody(body) {
         return await this.getFriendsGroups(body.id);
     }
@@ -111,6 +115,12 @@ module.exports = class UserRep {
         return differenceName;
     }
 
+    async GetAllFriendsName(friends){
+        let allUsers = await User.find();
+        let difference = allUsers.filter(x => friends.includes(x._id.toString()));
+        let differenceName = difference.map((item) => { return { friendName: item.user_display, id: item._id } });
+        return differenceName;
+    }
 
     async addUserViaFacebook(facebookId, userDisplay, imgurl, email) {
         let newUser = new User({
@@ -167,7 +177,6 @@ module.exports = class UserRep {
     }
 
     async updateUrl(username, imgUrl) {
-        console.log(username, imgUrl);
         await User.updateOne({ user_name: username }, {
             image_url: imgUrl
         });
@@ -227,7 +236,6 @@ module.exports = class UserRep {
         let user = await this.getUser(id);
         let friends = user.friends;
         let indexOfFriendRemoved = friends.indexOf(friendId);
-        console.log(indexOfFriendRemoved)
         if (indexOfFriendRemoved == -1) return
         friends.splice(indexOfFriendRemoved, 1);
         await User.updateOne({ _id: id }, {

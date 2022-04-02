@@ -4,6 +4,9 @@ const hashPassword = async (password) => {
 }
 
 const comperePasswords = async (password, hashPassword) => {
+    console.log(await bcrypt.compare(password, hashPassword));
+    console.log(password);
+    console.log(hashPassword);
     return await bcrypt.compare(password, hashPassword);
 }
 

@@ -17,6 +17,7 @@ module.exports = class SocketService {
                 this.clients[id] = socket.id;
                 console.log(`${id} connected! socket id: ${socket.id}`);
             });
+
             socket.on('addPost', async (fullPost) => {
                 let postMe = fullPost.post;
                 let post = await axios.post(dbPort + '/Post/AddFull', postMe);
@@ -26,6 +27,19 @@ module.exports = class SocketService {
                         let friendSocketId = this.clients[friend];
                         console.log(`posting to ${friendSocketId}`);
                         socket.to(friendSocketId).emit('FriendPosted', (post.data));
+                    }
+                }
+            })
+
+            socket.on('updatedPost', async (data) => {
+                let dataForServer = data.data;
+                let serverRes = await axios.post(gatewayPort + '/filter/UpdatePost', dataForServer);
+                if (!serverRes.data) return;
+                socket.emit('postHasBeenUpdated', serverRes.data);
+                for (let friend of data.friends) {
+                    if (this.clients[friend] != null && this.clients[friend] != undefined) {
+                        let friendSocketId = this.clients[friend];
+                        socket.to(friendSocketId).emit('postHasBeenUpdated', serverRes.data);
                     }
                 }
             })
@@ -47,6 +61,31 @@ module.exports = class SocketService {
                 }
 
             });
+
+            socket.on("AddANewFriendGroup", async (data) => {
+                console.log(`in add a new group `);
+                let users = data.usersId;
+                let resault = await axios.post(gatewayPort + '/friends/AddFriendsGroup', data);
+                if (!resault.data) return
+                for (let user of users) {
+                    console.log(this.clients[user]);
+                    if (this.clients[user] == socket.id) {
+                        console.log("emitToMe");
+                        socket.emit("addedToFriendGroup", (resault.data));
+                    }
+                    else {
+                        let friendSocketId = this.clients[data.user];
+                        if (friendSocketId != null && friendSocketId != undefined)
+                            socket.to(friendSocketId).emit("addedToFriendGroup", (resault.data));
+                    }
+                }
+            });
+            socket.on("logOut", async (refreshTheToken) => {
+                console.log();
+                delete this.clients[socket.id];
+                let resault = await axios.post(gatewayPort + '/authentication/logout', { token: refreshTheToken });
+
+            })
 
         })
 

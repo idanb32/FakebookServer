@@ -38,9 +38,9 @@ router.post('/getInfo', (req, res) => {
     res.send(resault);
 })
 
-router.post('/refreshTheToken', (req, res) => {
+router.post('/refreshTheToken', async (req, res) => {
     console.log("in refresh token")
-    let resault = LoginService.refreshTheToken(req.body.refreshToken);
+    let resault = await LoginService.refreshTheToken(req.body.refreshToken);
     res.send(resault);
 })
 

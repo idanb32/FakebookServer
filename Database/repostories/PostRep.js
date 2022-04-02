@@ -38,12 +38,13 @@ module.exports = class PostRep {
     }
 
     async getPostOfUserBody(body) {
-        return await this.getPostByUser(body.userId);
+        return await this.getPostByUser(body.id);
     }
 
     async getPosts() {
         return await Post.find();
     }
+
 
     async getPostsOfFriendsBody(body) {
         return await this.getPostsOfFriends(body.userId);
@@ -56,10 +57,20 @@ module.exports = class PostRep {
             body.postId);
     }
 
+    async UpdateMyPostFromBody(body) {
+        return await this.UpdateMyPost(body.id,
+            body.AddTags,
+            body.RemoveTags,
+            body.RemoveUserTags,
+            body.UserTags)
+    }
+
+
     async getPostByUser(userId) {
         let posts = await Post.find({ user: userId });
         return posts;
     }
+
 
     async AddLikeAndComment(userId, comment, like, postId) {
         let postToUpdate = await Post.findById(postId);
@@ -85,7 +96,6 @@ module.exports = class PostRep {
                 postToUpdate.likes.splice(index, 1);
         }
         await postToUpdate.save();
-        console.log(postToUpdate);
         return postToUpdate;
     }
 
@@ -113,7 +123,6 @@ module.exports = class PostRep {
             user_tags: userTags
         });
         await newPost.save();
-        console.log(newPost);
         return newPost;
     }
 
@@ -123,7 +132,6 @@ module.exports = class PostRep {
 
     async getPostsOfFriends(userId) {
         let user = await User.findById(userId);
-        console.log(user);
         let userFriends = user.friends;
         let posts = [];
         for (let position in userFriends) {
@@ -138,7 +146,6 @@ module.exports = class PostRep {
     }
 
     async addTags(postId, tags) {
-        console.log(typeof tags)
         if (typeof tags == "string") {
             let post = await this.getPost(postId);
             if (post.tags != undefined) {
@@ -223,5 +230,63 @@ module.exports = class PostRep {
             });
         }
     }
+
+    async UpdateMyPost(id,
+        AddTags, RemoveTags,
+        RemoveUserTags, UserTags) {
+        if (AddTags && AddTags.length > 0) {
+            await this.addTags(id, AddTags);
+        }
+        if (UserTags && UserTags.length > 0) {
+            await this.addTagedUsersByString(id, UserTags)
+        }
+        if (RemoveTags && RemoveTags.length > 0) {
+            await this.removeTagsFromPost(id, RemoveTags);
+        }
+        if (RemoveUserTags && RemoveUserTags.length > 0) {
+            await this.removeUserTaggedFromPost(id, RemoveUserTags);
+        }
+        let post = await Post.findById(id);
+        console.log(post);
+        return post;
+    }
+
+    async removeTagsFromPost(id, removedTags) {
+        await Post.updateOne({ _id: id },
+            {
+                $pullAll: {
+                    tags: removedTags
+                }
+            });
+    }
+
+    async removeUserTaggedFromPost(id, RemoveUserTags) {
+        await Post.updateOne({ _id: id },
+            {
+                $pullAll: {
+                    user_tags: RemoveUserTags
+                }
+            });
+    }
+
+
+    async addTagedUsersByString(id, userTags) {
+        let usertagged = [];
+        for (let userName of userTags) {
+            try {
+                let userId = await User.findOne({ user_display: userName });
+                usertagged.push(userId._id);
+            }
+            catch (err) {
+                console.log(err);
+            }
+        }
+        await Post.updateOne({ _id: id }, {
+            $push: { user_tags: usertagged }
+        });
+    }
+
+
+
 
 }

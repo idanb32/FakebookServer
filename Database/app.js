@@ -15,7 +15,7 @@ const CommentsRouter = require('./routers/CommentsRouter');
 const UserRouter = require('./routers/UserRouter');
 const PostRouter = require('./routers/PostRouter');
 const FriendsGroupRouter = require('./routers/FriendsGroupRouter');
-
+const filterRouter = require('./routers/FilterRouter');
 
 app.use(cors({
     origin: origin
@@ -27,7 +27,7 @@ app.use('/Comment', CommentsRouter);
 app.use('/User', UserRouter);
 app.use('/Post', PostRouter);
 app.use('/FriendGroup', FriendsGroupRouter);
-
+app.use('/Filter', filterRouter);
 
 
 app.listen(port, () => {

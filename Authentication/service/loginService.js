@@ -1,7 +1,7 @@
 require('dotenv').config()
 const axios = require('axios');
 const hashPassword = require('./hashPassword');
-const jwt = require('jsonwebtoken')
+const jwt = require('jsonwebtoken');
 
 module.exports = class LoginService {
     constructor(config) {
@@ -27,7 +27,7 @@ module.exports = class LoginService {
         let userReq = await axios.post(this._dataBaseServer + "User/GetByName", { username: userName });
         let user = userReq.data;
         if (!user) return "User not found.";
-        if (!hashPassword.comperePasswords(password, user.password)) return "User not found.";
+        if (! await hashPassword.comperePasswords(password, user.password)) return "User not found.";
         if (this._loggedInUsers[user._id] == "userLogged") return "User logged in already.";
         this._loggedInUsers[user._id] = "userLogged";
         let mainToken = jwt.sign(user, process.env.ACCESS_TOKEN_SECRET, { expiresIn: '14m' });
@@ -58,23 +58,22 @@ module.exports = class LoginService {
         return { accessToken: mainToken, refreshToken: refreshToken };
     }
 
-    refreshTheToken(refreshToken) {
+    async refreshTheToken(refreshToken) {
         if (refreshToken == null) return false;
         if (!this.refreshTokens.includes(refreshToken)) {
             this.refreshTokens.push(refreshToken);
         };
-        return jwt.verify(refreshToken, process.env.REFRESH_TOKEN_SECRET, (err, user) => {
+        return jwt.verify(refreshToken, process.env.REFRESH_TOKEN_SECRET, async (err, user) => {
             if (err) {
                 console.log(err)
                 return false;
             }
-            let formatedUser = this.formatUser(user)
-            console.log(formatedUser)
+            let getUser = await axios.post(this._dataBaseServer + "User/Get", {id: user._id});
+            let formatedUser = getUser.data;
             if (this._loggedInUsers[user._id] != 'userLogged')
                 this._loggedInUsers[user._id] = "userLogged";
             let newToken = jwt.sign(formatedUser, process.env.ACCESS_TOKEN_SECRET, { expiresIn: '14m' });
             let returnMe = { user: formatedUser, token: { accessToken: newToken, refreshToken: refreshToken } };
-            console.log(returnMe)
             return returnMe;
         });
     }
@@ -94,7 +93,6 @@ module.exports = class LoginService {
     }
 
     getInfo(token) {
-        console.log(token)
         if (token == null) return false;
         return jwt.verify(token, process.env.ACCESS_TOKEN_SECRET, (err, user) => {
             if (err) {
@@ -108,23 +106,23 @@ module.exports = class LoginService {
     }
 
     getInfoFromRefresh(token) {
-        if (refreshToken == null) return false;
-        if (!this.refreshTokens.includes(refreshToken)) return false;
+        if (token == null) return false;
+        if (!this.refreshTokens.includes(token)) return false;
         return jwt.verify(token, process.env.REFRESH_TOKEN_SECRET, (err, user) => {
             if (err) {
                 console.log(err)
                 return false;
             }
-            return user;
+            return user._id;
         });
     }
 
 
     logOut(token) {
-        if (this.refreshTheTokens)
+        let userId = this.getInfoFromRefresh(token);
+        if (this.refreshTokens)
             this.refreshTokens = this.refreshTokens.filter(currentToken => currentToken !== token);
-        let user = this.getInfoFromRefresh(token);
-        this._loggedInUsers = this._loggedInUsers.filter(currentUser => currentUser !== user);
+       delete this._loggedInUsers[userId]
     }
 
     async register(username, password, userDisplay, imgurl, email) {

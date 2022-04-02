@@ -25,6 +25,7 @@ router.post('/loginWithFacebook', async (req,res)=>{
 })
 
 router.post('/logout', async (req,res)=>{
+    console.log(req.body);
     let resault = await axios.post(port+"/logout",req.body);
     let data = resault.data;
     res.send(data);
@@ -51,6 +52,5 @@ router.post('/refreshTheToken', async (req,res)=>{
     let data = resault.data;
     res.send(data);
 })
-
 
 module.exports = router;

@@ -39,4 +39,25 @@ router.post('/AddFriend', async (req, res) => {
     res.send(serverRes.data);
 });
 
+router.post('/AddFriendsGroup', async (req, res) => {
+    let serverRes = await axios.post(dbPort + '/FriendGroup/Add', req.body);
+    res.send(serverRes.data);
+});
+router.post('/GetAllFriendsName', async (req, res) => {
+    let serverRes = await axios.post(dbPort + '/User/GetAllFriendsName', req.body);
+    res.send(serverRes.data);
+});
+router.post('/GetMyPosts', async (req, res) => {
+    console.log('in get my posts');
+    let serverRes = await axios.post(dbPort + '/Post/GetMyPosts', req.body);
+    res.send(serverRes.data);
+});
+
+router.post('/getFriendsGroupName', async (req, res) => {
+    let serverRes = await axios.post(dbPort + '/FriendGroup/getFriendsGroupName', req.body);
+    console.log(serverRes.data);
+    res.send(serverRes.data);
+});
+
+
 module.exports = router;
