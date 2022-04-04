@@ -84,7 +84,7 @@ module.exports = class SocketService {
                 console.log();
                 delete this.clients[socket.id];
                 let resault = await axios.post(gatewayPort + '/authentication/logout', { token: refreshTheToken });
-
+                console.log(resault.data);
             })
 
         })

@@ -15,12 +15,29 @@ module.exports = class LoginService {
         return await this.login(body.username, body.password);
     }
 
+    async changePasswordFromBody(body) {
+        return await this.changePassword(body.username, body.password);
+    }
+
     async registerFromBody(body) {
         return await this.register(body.username,
             body.password,
             body.userDisplay,
             body.imgurl,
             body.email);
+    }
+
+    async changePassword(userName, password) {
+        let userReq = await axios.post(this._dataBaseServer + "User/GetByName", { username: userName });
+        let user = userReq.data;
+        if (!user) return "User not found.";
+        if (this._loggedInUsers[user._id] == "userLogged") return "Cant change password beacuse the user is logged in already.";
+        this._loggedInUsers[user._id] = "userLogged";
+        await axios.post(this._dataBaseServer + "User/UpdatePassword", { username: userName, password: password });
+        let mainToken = jwt.sign(user, process.env.ACCESS_TOKEN_SECRET, { expiresIn: '14m' });
+        let refreshToken = jwt.sign(user, process.env.REFRESH_TOKEN_SECRET);
+        this.refreshTokens.push(refreshToken);
+        return { accessToken: mainToken, refreshToken: refreshToken };
     }
 
     async login(userName, password) {
@@ -68,7 +85,7 @@ module.exports = class LoginService {
                 console.log(err)
                 return false;
             }
-            let getUser = await axios.post(this._dataBaseServer + "User/Get", {id: user._id});
+            let getUser = await axios.post(this._dataBaseServer + "User/Get", { id: user._id });
             let formatedUser = getUser.data;
             if (this._loggedInUsers[user._id] != 'userLogged')
                 this._loggedInUsers[user._id] = "userLogged";
@@ -122,7 +139,7 @@ module.exports = class LoginService {
         let userId = this.getInfoFromRefresh(token);
         if (this.refreshTokens)
             this.refreshTokens = this.refreshTokens.filter(currentToken => currentToken !== token);
-       delete this._loggedInUsers[userId]
+        delete this._loggedInUsers[userId]
     }
 
     async register(username, password, userDisplay, imgurl, email) {

@@ -52,5 +52,12 @@ router.post('/refreshTheToken', async (req,res)=>{
     let data = resault.data;
     res.send(data);
 })
+router.post('/changePassword', async (req,res)=>{
+    console.log("changedPass");
+    let resault = await axios.post(port+"/changePassword",req.body);
+    let data = resault.data;
+    res.send(data);
+})
+
 
 module.exports = router;

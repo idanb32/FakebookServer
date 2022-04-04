@@ -9,6 +9,11 @@ router.post('/login', async (req, res) => {
     console.log(resault);
     res.send(resault);
 })
+router.post('/changePassword', async (req, res) => {
+    let resault = await LoginService.changePasswordFromBody(req.body);
+    console.log(resault);
+    res.send(resault);
+})
 
 router.post('/loginWithGoogle', async (req, res) => {
     let resault = await LoginService.loginGoogle(req.body);
@@ -23,6 +28,7 @@ router.post('/loginWithFacebook', async (req, res) => {
 })
 
 router.post('/logout',  (req, res) => {
+    console.log("inLogout");
     LoginService.logOut(req.body.token);
     res.send('loggedOut');
 })
